@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de pedidos do Almoxarifado LIN — Instituto Butantan">
+    <title>Pedidos Almoxarifado LIN — Instituto Butantan</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ==================== LOGIN SCREEN ==================== -->
+    <div id="login-screen" class="screen active login-screen">
+        <div class="login-card glass-card">
+            <div class="login-logos">
+                <img src="assets/logo-fundacao.svg" alt="Fundação Butantan" class="logo-img">
+                <img src="assets/logo-instituto.svg" alt="Instituto Butantan" class="logo-img">
+            </div>
+            <h1 class="login-title">Pedidos Almoxarifado LIN</h1>
+            <p class="login-subtitle">Instituto Butantan</p>
+
+            <div id="login-error" class="login-error">
+                <span>⚠️ Acesso restrito a contas @fundacaobutantan.org.br</span>
+            </div>
+
+            <div class="login-btn-container">
+                <div id="google-signin-btn"></div>
+            </div>
+
+            <div class="login-divider">
+                <span>acesso seguro</span>
+            </div>
+
+            <div class="login-footer">
+                <span class="lock-icon">🔒</span>
+                <span>Restrito a @fundacaobutantan.org.br</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== FORM SCREEN ==================== -->
+    <div id="form-screen" class="screen form-screen">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="header-logos">
+                    <img src="assets/logo-fundacao.svg" alt="Fundação Butantan" class="logo-img">
+                    <img src="assets/logo-instituto.svg" alt="Instituto Butantan" class="logo-img">
+                </div>
+                <div class="header-info">
+                    <div class="header-title">Pedidos Almoxarifado LIN</div>
+                    <div class="header-subtitle">Instituto Butantan</div>
+                </div>
+            </div>
+            <div class="header-user">
+                <span class="user-email-display" id="user-email-display"></span>
+                <button id="logout-btn" class="btn-logout" type="button">Sair</button>
+            </div>
+        </header>
+
+        <!-- Form Body -->
+        <div class="form-container">
+
+            <!-- Meta Section: ID, Date, Period, Email -->
+            <div class="meta-section">
+                <div class="section-label">Informações do Pedido</div>
+                <div class="meta-grid glass-card" style="padding: 24px;">
+
+                    <div class="meta-item">
+                        <label class="field-label">ID do Pedido</label>
+                        <div class="order-badge" id="order-id">—</div>
+                    </div>
+
+                    <div class="meta-item">
+                        <label class="field-label" for="pickup-date">Data de Retirada</label>
+                        <input type="date" id="pickup-date" class="field-input" required>
+                    </div>
+
+                    <div class="meta-item">
+                        <label class="field-label" for="period-select">Período</label>
+                        <select id="period-select" class="field-select" required>
+                            <option value="">Selecione...</option>
+                            <option value="Manhã">☀️ Manhã (até 08h)</option>
+                            <option value="Tarde">🌤️ Tarde (até 16h)</option>
+                        </select>
+                        <div id="period-warning" class="period-warning">
+                            <span class="warn-icon">⚠️</span>
+                            <span id="period-warning-text"></span>
+                        </div>
+                    </div>
+
+                    <div class="meta-item">
+                        <label class="field-label" for="email-field">E-mail</label>
+                        <input type="email" id="email-field" class="field-input" readonly placeholder="Carregando...">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Materials Section -->
+            <div class="materials-section">
+                <div class="materials-header">
+                    <div class="section-label" style="margin-bottom: 0; flex: 1;">Materiais</div>
+                    <div class="materials-counter">
+                        <span id="materials-count">0</span> / 5 materiais adicionados
+                    </div>
+                </div>
+
+                <div id="materials-container">
+                    <!-- Material cards are generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Submit Section -->
+            <div class="submit-section">
+                <div class="form-note">
+                    <span class="note-icon">📦</span>
+                    <span>Máximo de 5 materiais por pedido. Para mais, abra outro pedido.</span>
+                </div>
+                <button id="submit-btn" class="btn-submit" type="button">
+                    <span class="btn-text">FAZER PEDIDO</span>
+                    <span class="btn-arrow">→</span>
+                    <div class="btn-spinner"></div>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== SUCCESS MODAL ==================== -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-content glass-card">
+            <div class="modal-icon">
+                <svg viewBox="0 0 24 24">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2 class="modal-title">Pedido Enviado com Sucesso!</h2>
+            <p class="modal-subtitle">Seu pedido foi registrado com o ID:</p>
+            <div class="modal-order-id" id="modal-order-id">—</div>
+            <button id="new-order-btn" class="btn-new-order" type="button">
+                Fazer Outro Pedido
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== LOADING OVERLAY ==================== -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text">Carregando materiais...</div>
+    </div>
+
+    <!-- ==================== TOAST NOTIFICATION ==================== -->
+    <div id="toast" class="toast">
+        <span class="toast-icon" id="toast-icon">⚠️</span>
+        <span id="toast-message"></span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
