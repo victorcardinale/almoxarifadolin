@@ -567,19 +567,15 @@ function setMinDate() {
 
 function getBrasiliaDate() {
   const now = new Date();
-  // Converte para horário de Brasília (UTC-3)
-  const brasiliaOffset = -3 * 60; // -180 minutos
-  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const brasiliaTime = new Date(utc + (brasiliaOffset * 60000));
-  return brasiliaTime.toISOString().split('T')[0];
+  const dateStr = now.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+  const [day, month, year] = dateStr.split('/');
+  return `${year}-${month}-${day}`;
 }
 
 function getBrasiliaHour() {
   const now = new Date();
-  const brasiliaOffset = -3 * 60;
-  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-  const brasiliaTime = new Date(utc + (brasiliaOffset * 60000));
-  return brasiliaTime.getHours();
+  const hourStr = now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo', hour: '2-digit', hour12: false });
+  return parseInt(hourStr, 10);
 }
 
 function updatePeriodOptions() {
