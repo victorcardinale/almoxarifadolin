@@ -72,10 +72,10 @@ function handleCredentialResponse(response) {
     // Decodifica o JWT token corretamente (Base64Url para UTF-8)
     const base64Url = response.credential.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
     }).join(''));
-    
+
     const payload = JSON.parse(jsonPayload);
     const email = payload.email || '';
     const hd = payload.hd || ''; // hosted domain
@@ -242,7 +242,7 @@ async function loadMaterialsFromCSV() {
     if (!line) continue;
 
     // Parse CSV (campos entre aspas)
-    const match = line.match(/^"([^"]*)","([^"]*)"/); 
+    const match = line.match(/^"([^"]*)","([^"]*)"/);
     if (!match) continue;
 
     const sap = match[1].trim();
@@ -329,9 +329,9 @@ function populateSelectOptions(index, filter = '') {
   // Filtra materiais
   const filtered = filterLower
     ? materialsData.filter(m =>
-        m.descricao.toLowerCase().includes(filterLower) ||
-        m.sap.toLowerCase().includes(filterLower)
-      )
+      m.descricao.toLowerCase().includes(filterLower) ||
+      m.sap.toLowerCase().includes(filterLower)
+    )
     : materialsData;
 
   // Gera HTML
@@ -422,9 +422,6 @@ function initEventListeners() {
   // Date change → update period options
   document.getElementById('pickup-date').addEventListener('change', updatePeriodOptions);
 
-  // Period change → validate
-  document.getElementById('period-select').addEventListener('change', validatePeriod);
-
   // Close selects when clicking outside
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.custom-select')) {
@@ -438,11 +435,67 @@ function initEventListeners() {
       closeAllSelects();
     }
   });
+
+  // Bind generic custom selects (period and area)
+  bindGenericSelectEvents();
+}
+
+function bindGenericSelectEvents() {
+  // Select triggers
+  document.querySelectorAll('#period-custom-select .select-trigger, #area-custom-select .select-trigger').forEach(trigger => {
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const selectEl = trigger.closest('.custom-select');
+
+      if (selectEl.classList.contains('open')) {
+        closeAllSelects();
+      } else {
+        closeAllSelects();
+        selectEl.classList.add('open');
+      }
+    });
+  });
+
+  // Select options
+  document.querySelectorAll('#period-custom-select .select-option, #area-custom-select .select-option').forEach(opt => {
+    opt.addEventListener('click', (e) => {
+      const option = e.currentTarget;
+      if (option.classList.contains('disabled')) return;
+
+      const type = option.dataset.type;
+      const value = option.dataset.value;
+      const text = option.textContent;
+
+      const selectEl = document.getElementById(type + '-custom-select');
+      const trigger = selectEl.querySelector('.select-trigger');
+
+      trigger.textContent = text;
+      trigger.classList.add('has-value');
+
+      document.getElementById(type + '-select').value = value;
+
+      if (type === 'period') {
+        validatePeriod();
+      } else if (type === 'area') {
+        const outrosContainer = document.getElementById('area-outros-container');
+        const outrosInput = document.getElementById('area-outros-input');
+        if (value === 'Outros') {
+          outrosContainer.style.display = 'block';
+          outrosInput.focus();
+        } else {
+          outrosContainer.style.display = 'none';
+          outrosInput.value = '';
+        }
+      }
+
+      closeAllSelects();
+    });
+  });
 }
 
 function bindMaterialEvents() {
   // Select triggers
-  document.querySelectorAll('.select-trigger').forEach(trigger => {
+  document.querySelectorAll('#materials-container .select-trigger').forEach(trigger => {
     trigger.addEventListener('click', (e) => {
       e.stopPropagation();
       const index = trigger.dataset.index;
@@ -457,7 +510,7 @@ function bindMaterialEvents() {
   });
 
   // Search inputs
-  document.querySelectorAll('.select-search').forEach(input => {
+  document.querySelectorAll('#materials-container .select-search').forEach(input => {
     input.addEventListener('input', (e) => {
       const index = e.target.dataset.index;
       populateSelectOptions(index, e.target.value);
@@ -531,7 +584,7 @@ function getBrasiliaHour() {
 
 function updatePeriodOptions() {
   const dateInput = document.getElementById('pickup-date');
-  const periodSelect = document.getElementById('period-select');
+  const periodValue = document.getElementById('period-select').value;
   const warningEl = document.getElementById('period-warning');
   const warningText = document.getElementById('period-warning-text');
 
@@ -542,28 +595,27 @@ function updatePeriodOptions() {
   const currentHour = getBrasiliaHour();
   const isToday = selectedDate === today;
 
+  const manhaOption = document.querySelector('.select-option[data-type="period"][data-value="Manhã"]');
+  const tardeOption = document.querySelector('.select-option[data-type="period"][data-value="Tarde"]');
+
   // Habilita todas as opções primeiro
-  periodSelect.querySelectorAll('option').forEach(opt => {
-    opt.disabled = false;
-  });
+  manhaOption.classList.remove('disabled');
+  tardeOption.classList.remove('disabled');
 
   warningEl.classList.remove('show');
 
   if (isToday) {
-    const manhaOption = periodSelect.querySelector('option[value="Manhã"]');
-    const tardeOption = periodSelect.querySelector('option[value="Tarde"]');
-
     if (currentHour >= 8) {
-      manhaOption.disabled = true;
-      if (periodSelect.value === 'Manhã') {
-        periodSelect.value = '';
+      manhaOption.classList.add('disabled');
+      if (periodValue === 'Manhã') {
+        clearGenericSelect('period');
       }
     }
 
     if (currentHour >= 16) {
-      tardeOption.disabled = true;
-      if (periodSelect.value === 'Tarde') {
-        periodSelect.value = '';
+      tardeOption.classList.add('disabled');
+      if (periodValue === 'Tarde') {
+        clearGenericSelect('period');
       }
     }
 
@@ -576,6 +628,14 @@ function updatePeriodOptions() {
       warningEl.classList.add('show');
     }
   }
+}
+
+function clearGenericSelect(type) {
+  const selectEl = document.getElementById(type + '-custom-select');
+  const trigger = selectEl.querySelector('.select-trigger');
+  trigger.textContent = 'Selecione...';
+  trigger.classList.remove('has-value');
+  document.getElementById(type + '-select').value = '';
 }
 
 function validatePeriod() {
@@ -594,12 +654,12 @@ function validatePeriod() {
   if (isToday) {
     if (selectedPeriod === 'Manhã' && currentHour >= 8) {
       showToast('Período da manhã não disponível para hoje (após 08h).', 'warning');
-      periodSelect.value = '';
+      clearGenericSelect('period');
       return false;
     }
     if (selectedPeriod === 'Tarde' && currentHour >= 16) {
       showToast('Período da tarde não disponível para hoje (após 16h).', 'warning');
-      periodSelect.value = '';
+      clearGenericSelect('period');
       return false;
     }
   }
@@ -672,6 +732,23 @@ function validateForm() {
   const dateInput = document.getElementById('pickup-date');
   const periodSelect = document.getElementById('period-select');
 
+  const areaSelect = document.getElementById('area-select');
+  const areaOutros = document.getElementById('area-outros-input');
+
+  // Área
+  if (!areaSelect.value) {
+    showToast('Selecione a área.', 'warning');
+    const trigger = document.querySelector('#area-custom-select .select-trigger');
+    if (trigger) trigger.focus();
+    return false;
+  }
+
+  if (areaSelect.value === 'Outros' && !areaOutros.value.trim()) {
+    showToast('Digite a área.', 'warning');
+    areaOutros.focus();
+    return false;
+  }
+
   // Data de retirada
   if (!dateInput.value) {
     showToast('Selecione a data de retirada.', 'warning');
@@ -716,15 +793,20 @@ function validateForm() {
 function buildOrderData() {
   const dateInput = document.getElementById('pickup-date');
   const periodSelect = document.getElementById('period-select');
+  const areaSelect = document.getElementById('area-select');
+  const areaOutros = document.getElementById('area-outros-input');
 
   // Formata a data para DD/MM/YYYY
   const dateParts = dateInput.value.split('-');
   const formattedDate = dateParts[2] + '/' + dateParts[1] + '/' + dateParts[0];
 
+  const finalArea = areaSelect.value === 'Outros' ? `Outros: ${areaOutros.value.trim()}` : areaSelect.value;
+
   const data = {
     idPedido: currentOrderId,
     dataRetirada: formattedDate,
     periodo: periodSelect.value,
+    area: finalArea,
     email: userEmail
   };
 
@@ -756,7 +838,10 @@ async function handleNewOrder() {
 
   // Reseta formulário
   document.getElementById('pickup-date').value = '';
-  document.getElementById('period-select').value = '';
+  clearGenericSelect('period');
+  clearGenericSelect('area');
+  document.getElementById('area-outros-input').value = '';
+  document.getElementById('area-outros-container').style.display = 'none';
   document.getElementById('period-warning').classList.remove('show');
 
   // Limpa todos os materiais

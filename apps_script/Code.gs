@@ -160,6 +160,7 @@ function submitOrder(data) {
     data.dataRetirada || '',
     data.periodo || '',
     now,
+    data.area || '',
     data.email || ''
   ];
 
@@ -186,7 +187,7 @@ function ensureHeaders(sheet) {
   if (firstCell === 'ID_Pedido') return; // Headers já existem
 
   const headers = [
-    'ID_Pedido', 'Data Retirada', 'Período', 'Horário Pedido', 'Email',
+    'ID_Pedido', 'Data Retirada', 'Período', 'Horário Pedido', 'Área', 'Email',
     'Descrição material 1', 'Código SAP 1', 'Quantidade 1',
     'Descrição material 2', 'Código SAP 2', 'Quantidade 2',
     'Descrição material 3', 'Código SAP 3', 'Quantidade 3',

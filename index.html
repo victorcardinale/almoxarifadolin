@@ -95,14 +95,45 @@
 
                     <div class="meta-item">
                         <label class="field-label" for="period-select">Período</label>
-                        <select id="period-select" class="field-select" required>
-                            <option value="">Selecione...</option>
-                            <option value="Manhã">☀️ Manhã (até 08h)</option>
-                            <option value="Tarde">🌤️ Tarde (até 16h)</option>
-                        </select>
+                        <div class="custom-select" id="period-custom-select">
+                            <div class="select-trigger" data-type="period">Selecione...</div>
+                            <div class="select-dropdown">
+                                <div class="select-options">
+                                    <div class="select-option" data-value="Manhã" data-type="period">☀️ Manhã (até 08h)</div>
+                                    <div class="select-option" data-value="Tarde" data-type="period">🌤️ Tarde (até 16h)</div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="period-select" required>
                         <div id="period-warning" class="period-warning">
                             <span class="warn-icon">⚠️</span>
                             <span id="period-warning-text"></span>
+                        </div>
+                    </div>
+
+                    <div class="meta-item">
+                        <label class="field-label" for="area-select">Área</label>
+                        <div class="custom-select" id="area-custom-select">
+                            <div class="select-trigger" data-type="area">Selecione...</div>
+                            <div class="select-dropdown">
+                                <div class="select-options">
+                                    <div class="select-option" data-value="Recepção de Ovos" data-type="area">Recepção de Ovos</div>
+                                    <div class="select-option" data-value="Inoculação" data-type="area">Inoculação</div>
+                                    <div class="select-option" data-value="Colheita" data-type="area">Colheita</div>
+                                    <div class="select-option" data-value="Preparo de Materiais" data-type="area">Preparo de Materiais</div>
+                                    <div class="select-option" data-value="Preparo de Soluções" data-type="area">Preparo de Soluções</div>
+                                    <div class="select-option" data-value="Clarificação" data-type="area">Clarificação</div>
+                                    <div class="select-option" data-value="Purificação" data-type="area">Purificação</div>
+                                    <div class="select-option" data-value="Fragmentação" data-type="area">Fragmentação</div>
+                                    <div class="select-option" data-value="Filtração" data-type="area">Filtração</div>
+                                    <div class="select-option" data-value="CQI" data-type="area">CQI</div>
+                                    <div class="select-option" data-value="Outros" data-type="area">Outros</div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="area-select" required>
+                        <div id="area-outros-container" style="display: none; margin-top: 8px;">
+                            <input type="text" id="area-outros-input" class="field-input" placeholder="Digite a área...">
                         </div>
                     </div>
 
