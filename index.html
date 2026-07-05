@@ -99,8 +99,10 @@
                             <div class="select-trigger" data-type="period">Selecione...</div>
                             <div class="select-dropdown">
                                 <div class="select-options">
-                                    <div class="select-option" data-value="Manhã" data-type="period">☀️ Manhã (até 08h)</div>
-                                    <div class="select-option" data-value="Tarde" data-type="period">🌤️ Tarde (até 16h)</div>
+                                    <div class="select-option" data-value="Manhã" data-type="period">☀️ Manhã (até 08h)
+                                    </div>
+                                    <div class="select-option" data-value="Tarde" data-type="period">🌤️ Tarde (até 16h)
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -117,23 +119,33 @@
                             <div class="select-trigger" data-type="area">Selecione...</div>
                             <div class="select-dropdown">
                                 <div class="select-options">
-                                    <div class="select-option" data-value="Recepção de Ovos" data-type="area">Recepção de Ovos</div>
+                                    <div class="select-option" data-value="Recepção de Ovos" data-type="area">Recepção
+                                        de Ovos</div>
                                     <div class="select-option" data-value="Inoculação" data-type="area">Inoculação</div>
                                     <div class="select-option" data-value="Colheita" data-type="area">Colheita</div>
-                                    <div class="select-option" data-value="Preparo de Materiais" data-type="area">Preparo de Materiais</div>
-                                    <div class="select-option" data-value="Preparo de Soluções" data-type="area">Preparo de Soluções</div>
-                                    <div class="select-option" data-value="Clarificação" data-type="area">Clarificação</div>
-                                    <div class="select-option" data-value="Purificação" data-type="area">Purificação</div>
-                                    <div class="select-option" data-value="Fragmentação" data-type="area">Fragmentação</div>
+                                    <div class="select-option" data-value="Preparo de Materiais" data-type="area">
+                                        Preparo de Materiais</div>
+                                    <div class="select-option" data-value="Preparo de Soluções" data-type="area">Preparo
+                                        de Soluções</div>
+                                    <div class="select-option" data-value="Clarificação" data-type="area">Clarificação
+                                    </div>
+                                    <div class="select-option" data-value="Purificação" data-type="area">Purificação
+                                    </div>
+                                    <div class="select-option" data-value="Fragmentação" data-type="area">Fragmentação
+                                    </div>
                                     <div class="select-option" data-value="Filtração" data-type="area">Filtração</div>
                                     <div class="select-option" data-value="CQI" data-type="area">CQI</div>
+                                    <div class="select-option" data-value="ADM" data-type="area">ADM</div>
+                                    <div class="select-option" data-value="Rouparia" data-type="area">Rouparia</div>
+                                    <div class="select-option" data-value="Limpeza" data-type="area">Limpeza</div>
                                     <div class="select-option" data-value="Outros" data-type="area">Outros</div>
                                 </div>
                             </div>
                         </div>
                         <input type="hidden" id="area-select" required>
                         <div id="area-outros-container" style="display: none; margin-top: 8px;">
-                            <input type="text" id="area-outros-input" class="field-input" placeholder="Digite a área...">
+                            <input type="text" id="area-outros-input" class="field-input"
+                                placeholder="Digite a área...">
                         </div>
                     </div>
 
@@ -150,7 +162,7 @@
                 <div class="materials-header">
                     <div class="section-label" style="margin-bottom: 0; flex: 1;">Materiais</div>
                     <div class="materials-counter">
-                        <span id="materials-count">0</span> / 5 materiais adicionados
+                        <span id="materials-count">0</span> / 10 materiais adicionados
                     </div>
                 </div>
 
@@ -163,7 +175,7 @@
             <div class="submit-section">
                 <div class="form-note">
                     <span class="note-icon">📦</span>
-                    <span>Máximo de 5 materiais por pedido. Para mais, abra outro pedido.</span>
+                    <span>Máximo de 10 materiais por pedido. Para mais, abra outro pedido.</span>
                 </div>
                 <button id="submit-btn" class="btn-submit" type="button">
                     <span class="btn-text">FAZER PEDIDO</span>

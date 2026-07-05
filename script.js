@@ -175,21 +175,11 @@ async function loadInitialData() {
       throw new Error('Não foi possível carregar os materiais.');
     }
 
-    // Carrega próximo ID
-    try {
-      const idResponse = await fetchAppsScript('next_id');
-      if (idResponse && idResponse.nextId) {
-        currentOrderId = idResponse.nextId;
-      } else {
-        currentOrderId = 1;
-      }
-    } catch (err) {
-      console.warn('Erro ao buscar próximo ID, usando 1:', err);
-      currentOrderId = 1;
-    }
+    // Gera ID aleatório de até 5 dígitos (1 a 99999)
+    currentOrderId = generateRandomId();
 
     // Atualiza UI
-    document.getElementById('order-id').textContent = String(currentOrderId).padStart(4, '0');
+    document.getElementById('order-id').textContent = String(currentOrderId).padStart(5, '0');
 
     // Popula os dropdowns
     populateAllSelects();
@@ -266,7 +256,7 @@ function generateMaterialCards() {
   const container = document.getElementById('materials-container');
   container.innerHTML = '';
 
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     const card = document.createElement('div');
     card.className = 'material-card glass-card';
     card.id = 'material-card-' + i;
@@ -315,7 +305,7 @@ function generateMaterialCards() {
 // ==================== CUSTOM SELECT (SEARCHABLE DROPDOWN) ====================
 
 function populateAllSelects() {
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     populateSelectOptions(i);
   }
 }
@@ -682,7 +672,7 @@ function clearMaterial(index) {
 
 function updateMaterialsCount() {
   let count = 0;
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     const trigger = document.querySelector('#select-material-' + i + ' .select-trigger');
     if (trigger && trigger.dataset.selectedDesc) {
       count++;
@@ -764,7 +754,7 @@ function validateForm() {
 
   // Pelo menos 1 material
   let hasMaterial = false;
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     const trigger = document.querySelector('#select-material-' + i + ' .select-trigger');
     const qty = document.getElementById('qty-' + i).value;
 
@@ -806,7 +796,7 @@ function buildOrderData() {
     email: userEmail
   };
 
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     const trigger = document.querySelector('#select-material-' + i + ' .select-trigger');
     const qty = document.getElementById('qty-' + i).value;
 
@@ -821,7 +811,7 @@ function buildOrderData() {
 // ==================== SUCCESS MODAL ====================
 
 function showSuccessModal(orderId) {
-  document.getElementById('modal-order-id').textContent = String(orderId).padStart(4, '0');
+  document.getElementById('modal-order-id').textContent = String(orderId).padStart(5, '0');
   document.getElementById('success-modal').classList.add('active');
 }
 
@@ -841,22 +831,13 @@ async function handleNewOrder() {
   document.getElementById('period-warning').classList.remove('show');
 
   // Limpa todos os materiais
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     clearMaterial(i);
   }
 
-  // Carrega novo ID
-  try {
-    const idResponse = await fetchAppsScript('next_id');
-    if (idResponse.nextId) {
-      currentOrderId = idResponse.nextId;
-      document.getElementById('order-id').textContent = String(currentOrderId).padStart(4, '0');
-    }
-  } catch (err) {
-    // Incrementa localmente se falhar
-    currentOrderId++;
-    document.getElementById('order-id').textContent = String(currentOrderId).padStart(4, '0');
-  }
+  // Gera novo ID aleatório
+  currentOrderId = generateRandomId();
+  document.getElementById('order-id').textContent = String(currentOrderId).padStart(5, '0');
 
   // Scroll para o topo
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -903,6 +884,13 @@ function hideLoading() {
 }
 
 // ==================== UTILITY FUNCTIONS ====================
+
+/**
+ * Gera um ID aleatório de 1 a 99999 (até 5 dígitos)
+ */
+function generateRandomId() {
+  return Math.floor(Math.random() * 99999) + 1;
+}
 
 function escapeHtml(str) {
   const div = document.createElement('div');
